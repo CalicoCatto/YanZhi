@@ -1,20 +1,14 @@
 import Link from 'next/link'
 import { db } from '@/lib/db'
-import dayjs from 'dayjs'
 import { AdminActions } from './AdminActions'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
-  const [sources, recentLogs, articleCount] = await Promise.all([
+  const [sources, articleCount] = await Promise.all([
     db.source.findMany({
       orderBy: [{ platformCategory: 'asc' }, { name: 'asc' }],
       include: { _count: { select: { articles: true } } },
-    }),
-    db.crawlLog.findMany({
-      orderBy: { startedAt: 'desc' },
-      take: 20,
-      include: { source: { select: { name: true } } },
     }),
     db.article.count(),
   ])
@@ -73,58 +67,10 @@ export default async function AdminPage() {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Crawl Logs */}
-        <section>
-          <h2 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-            最近抓取日志
-          </h2>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-xs text-gray-500">
-                <tr>
-                  <th className="text-left px-4 py-2">数据源</th>
-                  <th className="text-left px-4 py-2">状态</th>
-                  <th className="text-right px-4 py-2">新文章</th>
-                  <th className="text-right px-4 py-2">时间</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentLogs.map((log) => (
-                  <tr key={log.id} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-2 text-gray-700">{log.source.name}</td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
-                          log.status === 'success'
-                            ? 'bg-green-100 text-green-600'
-                            : log.status === 'error'
-                            ? 'bg-red-100 text-red-500'
-                            : 'bg-yellow-100 text-yellow-600'
-                        }`}
-                      >
-                        {log.status}
-                      </span>
-                      {log.errorMessage && (
-                        <span className="ml-2 text-xs text-red-400 truncate max-w-xs inline-block">
-                          {log.errorMessage}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-right text-gray-600">{log.articlesFound}</td>
-                    <td className="px-4 py-2 text-right text-gray-400 text-xs">
-                      {dayjs(log.startedAt).format('MM-DD HH:mm')}
-                    </td>
-                  </tr>
-                ))}
-                {recentLogs.length === 0 && (
+                {sources.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-6 text-center text-gray-400 text-sm">
-                      暂无抓取记录
+                    <td colSpan={5} className="px-4 py-6 text-center text-gray-400 text-sm">
+                      暂无数据源（文章通过 Windows 端推送后自动创建）
                     </td>
                   </tr>
                 )}

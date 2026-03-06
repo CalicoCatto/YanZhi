@@ -9,17 +9,15 @@ datasource db {
 
 model Source {
   id               Int      @id @default(autoincrement())
-  name             String
-  type             String   // "wechat" | "website"
-  platformCategory String   @map("platform_category") // "official" | "school" | "club"
-  identifier       String   // 公众号名称 或 网站URL
-  config           String   @default("{}") // JSON string
+  name             String   @unique
+  type             String   @default("wechat")
+  platformCategory String   @map("platform_category") @default("wechat")
+  identifier       String   @default("")
   enabled          Boolean  @default(true)
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
-  articles  Article[]
-  crawlLogs CrawlLog[]
+  articles Article[]
 
   @@map("sources")
 }
@@ -39,9 +37,9 @@ model Article {
   // AI 分析字段
   aiCategory      String @default("其他") @map("ai_category")
   aiSubcategory   String @default("") @map("ai_subcategory")
-  aiTags          String @default("[]") @map("ai_tags") // JSON array string
+  aiTags          String @default("[]") @map("ai_tags")
   aiImportance    Int    @default(3) @map("ai_importance")
-  aiAnalysisLevel Int    @default(0) @map("ai_analysis_level") // 0=未分析, 1=一级, 2=二级
+  aiAnalysisLevel Int    @default(0) @map("ai_analysis_level")
   aiBrief         String @default("") @map("ai_brief")
 
   // 活动专用字段
@@ -59,22 +57,6 @@ model Article {
   @@index([publishedAt(sort: Desc)])
   @@index([aiCategory, publishedAt(sort: Desc)])
   @@map("articles")
-}
-
-model CrawlLog {
-  id            Int       @id @default(autoincrement())
-  sourceId      Int       @map("source_id")
-  status        String    // "success" | "error" | "running"
-  articlesFound Int       @default(0) @map("articles_found")
-  errorMessage  String?   @map("error_message")
-  startedAt     DateTime  @default(now()) @map("started_at")
-  finishedAt    DateTime? @map("finished_at")
-
-  source Source @relation(fields: [sourceId], references: [id])
-
-  @@index([sourceId])
-  @@index([startedAt(sort: Desc)])
-  @@map("crawl_logs")
 }
 
 model Category {
