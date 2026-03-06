@@ -42,3 +42,11 @@ next-env.d.ts
 
 /src/generated/prisma
 dev.db
+
+# Python 虚拟环境
+venv/
+__pycache__/
+*.pyc
+
+# mitmproxy 本地缓存
+windows/.sent_urls.json

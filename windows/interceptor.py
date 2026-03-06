@@ -27,10 +27,10 @@ from mitmproxy import http
 # ── 配置 ────────────────────────────────────────────────────────────────────
 
 # 服务器 ingest 端点（改为你的实际域名或 IP）
-SERVER_URL = os.environ.get("YANZHI_SERVER_URL", "https://你的域名/api/ingest")
+SERVER_URL = os.environ.get("YANZHI_SERVER_URL", "http://localhost:3000/api/ingest")
 
-# 与服务器 .env 中 INGEST_SECRET 保持一致
-INGEST_SECRET = os.environ.get("INGEST_SECRET", "your-ingest-secret")
+# 与 .env 中 INGEST_SECRET 保持一致
+INGEST_SECRET = os.environ.get("INGEST_SECRET", "yanzhi-local-secret")
 
 # 本地去重缓存文件
 SENT_CACHE_FILE = Path(__file__).parent / ".sent_urls.json"
