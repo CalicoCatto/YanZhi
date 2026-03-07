@@ -17,16 +17,25 @@ if errorlevel 1 (
 )
 for /f "tokens=*" %%v in ('node -v') do echo [OK] Node.js %%v
 
-:: 检查 Python
-where python > nul 2>&1
-if errorlevel 1 (
+:: 检查 Python（优先用 py 启动器，其次 python）
+set PYTHON_CMD=
+where py > nul 2>&1
+if not errorlevel 1 (
+    set PYTHON_CMD=py
+) else (
+    where python > nul 2>&1
+    if not errorlevel 1 (
+        set PYTHON_CMD=python
+    )
+)
+if "%PYTHON_CMD%"=="" (
     echo [错误] 未找到 Python，请先安装 Python 3.9+
     echo 下载地址：https://www.python.org/downloads/
     echo 安装时务必勾选 "Add Python to PATH"
     pause
     exit /b 1
 )
-for /f "tokens=*" %%v in ('python --version') do echo [OK] %%v
+for /f "tokens=*" %%v in ('%PYTHON_CMD% --version') do echo [OK] %%v（命令：%PYTHON_CMD%）
 
 :: 复制 .env
 if not exist ".env" (
@@ -50,8 +59,19 @@ echo [OK] 数据库初始化完成
 
 echo.
 echo [3/4] 创建 Python 虚拟环境...
-python -m venv venv
-if errorlevel 1 ( echo [错误] 创建虚拟环境失败 & pause & exit /b 1 )
+%PYTHON_CMD% -m venv venv
+if errorlevel 1 (
+    echo [提示] venv 创建失败，尝试用 virtualenv 作为备选...
+    %PYTHON_CMD% -m pip install --quiet virtualenv
+    %PYTHON_CMD% -m virtualenv venv
+    if errorlevel 1 (
+        echo [错误] 虚拟环境创建失败
+        echo 建议：从 https://www.python.org/downloads/ 重新安装官网版 Python
+        echo 安装时务必勾选 "Add Python to PATH"
+        pause
+        exit /b 1
+    )
+)
 echo [OK] 虚拟环境创建完成
 
 echo.
