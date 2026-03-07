@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚠️ 项目已终止
 
-## Getting Started
+> **本项目受限于微信闭源生态，核心数据采集功能无法稳定实现，最终以失败告终。**
+>
+> 微信公众号数据不对外开放任何合法 API，搜狗微信搜索已转为 JS 动态渲染无法静态抓取，
+> mitmproxy 拦截方案在实际部署中遭遇环境兼容性障碍，项目就此封存。
+>
+> **此仓库仅作存档，不再维护。**
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# 燕知 YanZhi
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+北京大学校园信息聚合 + AI 分析平台（未完成）。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 项目构想
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+聚合北大各公众号推文，通过 SiliconFlow AI（Qwen2.5-7B + DeepSeek-V3）自动分类、打标签、
+生成摘要，在统一界面中展示学术讲座、招聘实习、校园活动等信息。
 
-## Learn More
+## 技术栈
 
-To learn more about Next.js, take a look at the following resources:
+- **前端**：Next.js 16 + TypeScript + Tailwind CSS + shadcn/ui
+- **数据库**：Prisma 5 + SQLite
+- **AI 分析**：FastAPI + SiliconFlow API（两级分类）
+- **数据采集**（未能实现）：mitmproxy 拦截微信 PC 流量
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 失败原因
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **搜狗微信搜索**：已改为 JS 动态渲染，静态请求无法获取文章数据
+2. **mitmproxy 方案**：依赖 `zstandard` 的 C++ 编译环境，Windows 部署门槛过高；
+   微信 PC 版代理配置繁琐，证书信任流程复杂，难以普通用户使用
+3. **根本原因**：微信公众号生态完全封闭，无合法且稳定的数据获取途径
